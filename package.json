@@ -12,10 +12,11 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "lint": "node_modules/.bin/eslint --ext js src",
+    "eject": "react-scripts eject",
+    "start": "react-scripts start",
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [
@@ -37,8 +38,20 @@
   },
   "jest": {
     "collectCoverageFrom": [
-        "src/**/*.{js,jsx}",
-        "!src/index.js"
-      ]
-    }
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
+      "!src/common/Constants.js",
+      "!src/common/Formatters.js"
+    ]
+  },
+  "devDependencies": {
+    "@react-native-community/eslint-plugin": "^1.1.0",
+    "babel-eslint": "^10.1.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^5.2.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0"
+  }
 }
