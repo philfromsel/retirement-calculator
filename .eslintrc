@@ -1,0 +1,45 @@
+// This .eslintrc file applies the following linting configuration to everything in the project. If
+// some nested folder (i.e. a testing folder) requires a different or modified set of linting rules,
+// an .eslintrc file can be created in that sub-folder, and anything within that folder will follow
+// the newly specified rules, while keeping this "global" configuration intact for everything else.
+{
+  "settings": {
+    // makes eslint understand absolute imports from ./src
+    "import/resolver": {
+      "node": {
+        "paths": ["src"]
+      }
+    },
+    // extend the list of allowed types for jsdoc comments
+    "jsdoc": {
+      "preferredTypes": ["node", "func"]
+    }
+  },
+  // Use the following "pre-configured" linting rules. Configurations later in the array have higher precedence
+  "extends": [
+    "react-app",
+    "plugin:jsdoc/recommended",
+    "plugin:jsx-a11y/recommended",
+    "airbnb",
+    "prettier",
+    "prettier/react"
+  ],
+  "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "./src/**/*.test.js?(x)",
+          "./src/**/*.stories.jsx",
+          "./ftest/**/*.js",
+          "**/__tests__/**/*.js?(x)",
+          "./scripts/**/*.js?(x)"
+        ],
+        "optionalDependencies": false,
+        "peerDependencies": false
+      }
+    ],
+    "jsdoc/newline-after-description": 0, // disabled because it's unnecessary whitespace
+    "react/jsx-props-no-spreading": 0 // disabled because there are a lot of valid uses of prop spreading
+  }
+}

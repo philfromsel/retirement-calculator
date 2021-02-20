@@ -1,0 +1,12 @@
+# Ignoring the integration tests as they are not "pure" js but instead a DSL for working with test
+# cafe.
+
+build/*
+cmd/*
+internal/*
+docs/*
+Dockerfiles/*
+coverage/*
+src/react-app-env.d.ts
+src/serviceWorker.js
+src/setupTests.js
