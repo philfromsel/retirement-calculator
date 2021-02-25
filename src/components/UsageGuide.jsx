@@ -25,7 +25,7 @@ function UsageGuide() {
   const monthName = months[d.getMonth()];
 
   return (
-    <div align="left" background-color="#F7F7F8">
+    <div align="left" background-color="#F7F7F8" data-testid="usage-guide">
 
       <Typography variant="h5">Using The Tool</Typography>
       <br />

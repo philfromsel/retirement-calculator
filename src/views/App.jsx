@@ -95,7 +95,7 @@ const App = () => {
       )}
       <div className={classes.root}>
         <Typography variant="h4" color="primary">
-          SEL Retirement Benefits Calculator
+          ESOP Retirement Benefits Calculator
         </Typography>
         <Typography variant="body2" color="textSecondary">
           This is a simple mathematical calculator. It is not a guarantee of
@@ -108,7 +108,7 @@ const App = () => {
         <div className={classes.flexBoss}>
           <div className={classes.inputs}>
             <ProjectionInputs
-              data-testid="projInputs"
+              data-testid="projection-inputs"
               store={calculatorStore}
             />
           </div>
@@ -122,14 +122,15 @@ const App = () => {
               variant="scrollable"
               scrollButtons="auto"
               id="tabs"
+              whitespace="nowrap"
             >
               {calculatorStore.tabs.map((item) => (
-                <Tab key={item} label={item} disableRipple />
+                <Tab key={item} label={item} data-testid={`tab-${item}`} disableRipple />
               ))}
             </Tabs>
             <hr />
             {calculatorStore.selectedTabName === Constants.USAGE_GUIDE && (
-              <UsageGuide data-testid="UsageGuide" />
+              <UsageGuide />
             )}
             {calculatorStore.selectedTabName === Constants.ESOP_GROWTH && (
               <Typography
@@ -139,7 +140,7 @@ const App = () => {
               >
                 <i>
                   This is the calculated growth for an ESOP account based on the
-                  supplied parameters. Its purpose is to help SEL Employee
+                  supplied parameters. Its purpose is to help ESOP Employee
                   Owners visualize the long-term rewards of employee ownership
                   over the length of their career.
                 </i>
@@ -152,8 +153,8 @@ const App = () => {
                 data-testid="cap401k"
               >
                 <i>
-                  This is the calculated growth for an SEL 401(k) account based
-                  on the supplied parameters. Its purpose is to help SEL
+                  This is the calculated growth for a 401(k) account based
+                  on the supplied parameters. Its purpose is to help
                   Employee Owners to visualize the growth potential of their own
                   elective savings over the length of their career.
                 </i>
@@ -168,31 +169,24 @@ const App = () => {
               >
                 <i>
                   This is the combined calculated retirement savings for an ESOP
-                  account + SEL 401(k) account, based on the supplied
-                  parameters. Its purpose is to empower SEL Employee Owners to
-                  better visualize the benefits that SEL provides in planning
-                  and funding their own retirement.
+                  account + 401(k) account, based on the supplied parameters. Its
+                  purpose is to empower Employee Owners to better visualize the
+                  benefits that employee ownership provides in planning and
+                  funding their own retirement.
                 </i>
               </Typography>
             )}
             {calculatorStore.selectedTabName === Constants.ESOP_GROWTH && (
-              <ProjectionESOP data-testid="projESOP" store={calculatorStore} />
+              <ProjectionESOP store={calculatorStore} />
             )}
             {calculatorStore.selectedTabName === Constants.ONLY_401K && (
-              <Projection401k data-testid="proj401k" store={calculatorStore} />
+              <Projection401k store={calculatorStore} />
             )}
             {calculatorStore.selectedTabName ===
               Constants.COMBINED_INVESTMENTS && (
-              <ProjectionCombined
-                data-testid="projCombined"
-                store={calculatorStore}
+              <ProjectionCombined store={calculatorStore}
               />
             )}
-            <div className={classes.footer}>
-              <Typography variant="subtitle1" color="textPrimary">
-                SEL CONFIDENTIAL
-              </Typography>
-            </div>
           </div>
         </div>
       </div>

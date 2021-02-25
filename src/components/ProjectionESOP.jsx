@@ -84,6 +84,7 @@ function ProjectionESOP(props) {
   return (
     <Line
       data={data}
+      data-testid="chart-esop"
       options={{
         maintainAspectRatio: false,
         responsive: true,

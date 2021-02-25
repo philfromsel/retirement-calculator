@@ -29,6 +29,7 @@ function Projection401k(props) {
   return (
     <Line
       data={data}
+      data-testid="chart-401k"
       options={{
         maintainAspectRatio: false,
         tooltips: {

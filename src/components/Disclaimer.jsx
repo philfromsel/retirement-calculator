@@ -68,7 +68,7 @@ function Disclaimer(props) {
         </DialogContent>
         <DialogActions>
           <Button
-            data-testid="acknowledgeBtn"
+            data-testid="acknowledge-button"
             onClick={handleClose}
             variant="contained"
             color="primary"

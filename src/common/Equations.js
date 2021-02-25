@@ -97,7 +97,7 @@ function generate401kGrowthData(
  * @param {number} avgGrowth - Average annual growth to project
  * @param {number} initSalary - Current employee salary
  * @param {number} avgRaise - Average annual raise to project
- * @param {number} contribution - Average SEL contribution to the ESOP
+ * @param {number} contribution - Average Employer contribution to the ESOP
  * @param {number} inputInitYear - Initial year to use in the calculations
  * @param {number} totalYears - Total years to calculate
  * @returns {Array} - Data points calculated from the input data

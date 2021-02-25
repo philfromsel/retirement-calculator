@@ -121,20 +121,21 @@ class ProjectionInputs extends Component {
               <DebounceInput
                 element={TextField}
                 debounceTimeout={200}
-                data-testid="averageSELContribution"
-                id="averageSELContribution"
+                data-testid="averageEmployerESOPContribution"
+                id="averageEmployerESOPContribution"
                 type="number"
-                label="Annual SEL Contribution (%)"
-                value={store.averageSELContribution}
+                label="Annual Employer ESOP Contribution (%)"
+                value={store.averageEmployerESOPContribution}
                 InputProps={{ inputProps: { min: 5, max: 15 } }}
                 onChange={this.onChange}
                 fullWidth
+                width="max-content"
               />
               <br />
               <Typography variant="caption" color="textSecondary">
                 <i>
-                  Percentage of employee&apos;s annual salary contributed by SEL
-                  to the ESOP.
+                  Percentage of employee&apos;s annual salary contributed
+                  to the ESOP by the employer.
                 </i>
               </Typography>
               <br />
@@ -181,7 +182,7 @@ class ProjectionInputs extends Component {
               <br />
               <Typography variant="caption" color="textSecondary">
                 <i>
-                  Employee&apos;s SEL 401(k) account balance as of January 1st
+                  Employee&apos;s 401(k) account balance as of January 1st
                   of the current year.
                 </i>
               </Typography>

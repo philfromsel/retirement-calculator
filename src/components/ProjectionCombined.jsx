@@ -53,6 +53,7 @@ function ProjectionCombined(props) {
   return (
     <Line
       data={data}
+      data-testid="chart-combined"
       options={{
         maintainAspectRatio: false,
         tooltips: {
@@ -63,7 +64,7 @@ function ProjectionCombined(props) {
             label: (tooltipItems, _data) => {
               let itemLabel = "";
               if (tooltipItems.datasetIndex === 0) {
-                itemLabel = `Combined SEL Retirement Accounts balance: ${numFormatter.format(
+                itemLabel = `Combined Employee Retirement Accounts balance: ${numFormatter.format(
                   Math.trunc(tooltipItems.value)
                 )}`;
               } else if (tooltipItems.datasetIndex === 1) {
