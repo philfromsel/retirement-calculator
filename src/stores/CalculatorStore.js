@@ -12,9 +12,9 @@ import InitialValues from "../common/Defaults";
 class CalculatorStore {
   acknowledgedDisclaimer = InitialValues.acknowledgedDisclaimer;
 
-  averageAnnual401KFees = InitialValues.averageAnnual401KFees;
+  averageAnnual401kFees = InitialValues.averageAnnual401kFees;
 
-  averageAnnual401KGrowth = InitialValues.averageAnnual401KGrowth;
+  averageAnnual401kGrowth = InitialValues.averageAnnual401kGrowth;
 
   averageEmployerESOPContribution = InitialValues.averageEmployerESOPContribution;
 
@@ -22,15 +22,17 @@ class CalculatorStore {
 
   averageShareGrowth = InitialValues.averageShareGrowth;
 
+  currentEmployeeAge = InitialValues.currentEmployeeAge;
+
   initYear = InitialValues.initYear;
 
-  monthlyEmployeeContribution = InitialValues.monthlyEmployeeContribution;
+  employee401kContribution = InitialValues.employee401kContribution;
 
   selectedTab = InitialValues.selectedTab;
 
   startDate = InitialValues.startDate;
 
-  starting401KBalance = InitialValues.starting401KBalance;
+  starting401kBalance = InitialValues.starting401kBalance;
 
   startingSalary = InitialValues.startingSalary;
 
@@ -57,12 +59,15 @@ class CalculatorStore {
   get dataPoints401k() {
     return generate401kGrowthData(
       this.startDate,
-      this.starting401KBalance,
-      this.averageAnnual401KGrowth / 100,
-      this.monthlyEmployeeContribution,
-      this.averageAnnual401KFees / 100,
+      this.starting401kBalance,
+      this.startingSalary,
+      this.employee401kContribution / 100,
+      this.averageRaise / 100,
+      this.averageAnnual401kGrowth / 100,
+      this.averageAnnual401kFees / 100,
       this.initYear,
-      this.yearsToCalculate
+      this.yearsToCalculate,
+      this.currentEmployeeAge
     );
   }
 
@@ -95,17 +100,18 @@ decorate(CalculatorStore, {
   dataPoints401k: computed,
   dataPointsESOP: computed,
   acknowledgedDisclaimer: observable,
-  averageAnnual401KFees: observable,
-  averageAnnual401KGrowth: observable,
+  averageAnnual401kFees: observable,
+  averageAnnual401kGrowth: observable,
   averageEmployerESOPContribution: observable,
   averageRaise: observable,
   averageShareGrowth: observable,
+  currentEmployeeAge: observable,
   initYear: observable,
-  monthlyEmployeeContribution: observable,
+  employee401kContribution: observable,
   selectedTab: observable,
   selectedTabName: computed,
   startDate: observable,
-  starting401KBalance: observable,
+  starting401kBalance: observable,
   startingSalary: observable,
   startingESOPAccountValue: observable,
   yearsToCalculate: observable,

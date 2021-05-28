@@ -3,8 +3,12 @@ import { Line } from "react-chartjs-2";
 import PropTypes from "prop-types";
 import { observer } from "mobx-react";
 
-import { getYearsOfService, getPlanEntryDate } from "../common/DateHelpers";
-import { getVestedValue } from "../common/Equations";
+import {
+  getYearsOfService,
+  getPlanEntryDate,
+  getVestingDayByStartDate,
+  getVestingDayByYear
+} from "../common/DateHelpers";
 import { numFormatter, dateFormatter } from "../common/Formatters";
 
 /**
@@ -16,8 +20,8 @@ function ProjectionESOP(props) {
   const { store } = props;
 
   const remainingYearsToVest = 7 - getYearsOfService(store.startDate, store.initYear);
-  const initVestedYears = 5 - remainingYearsToVest;
   const vestedValues = [];
+  const vestedPercentages = [];
   for (
     let i = 0;
     i <= remainingYearsToVest && i < store.dataPointsESOP.length;
@@ -27,13 +31,40 @@ function ProjectionESOP(props) {
       store.startDate,
       store.initYear + i - 1
     );
-    vestedValues[i] = { x: store.dataPointsESOP[i].x };
+    let endOfYearPoint = {};
+    endOfYearPoint = { x: store.dataPointsESOP[i].x };
     if (vestedYears < 2) {
-      vestedValues[i].y = 0;
+      endOfYearPoint.y = 0;
+      vestedPercentages.push(0);
     } else {
-      vestedValues[i].y = Math.trunc(
+      endOfYearPoint.y = Math.trunc(
         store.dataPointsESOP[i].y * ((vestedYears - 1) * 0.2)
       );
+      vestedPercentages.push((vestedYears - 1) * 20);
+    }
+    vestedValues.push(endOfYearPoint);
+
+    if (i === 0) {
+      // Check if they vested their first year
+      if (getYearsOfService(store.startDate, store.initYear) === 1) {
+        const vestingPoint = {};
+        vestingPoint.x = dateFormatter.format(getVestingDayByStartDate(store.startDate));
+        vestingPoint.y = 0;
+        vestedValues.push(vestingPoint);
+        vestedPercentages.push(0);
+      } else if (getYearsOfService(store.startDate, store.initYear) > 1) {
+        const vestingPoint = {};
+        vestingPoint.x = dateFormatter.format(getVestingDayByYear(store.initYear));
+        vestingPoint.y = Math.trunc(store.dataPointsESOP[i].y * ((vestedYears) * 0.2));
+        vestedValues.push(vestingPoint);
+        vestedPercentages.push(vestedYears * 20);
+      }
+    } else if (vestedYears < 6) {
+      const vestingPoint = {};
+      vestingPoint.x = dateFormatter.format(getVestingDayByYear(store.initYear + i));
+      vestingPoint.y = Math.trunc(store.dataPointsESOP[i].y * ((vestedYears) * 0.2));
+      vestedValues.push(vestingPoint);
+      vestedPercentages.push(vestedYears * 20);
     }
   }
 
@@ -84,7 +115,6 @@ function ProjectionESOP(props) {
   return (
     <Line
       data={data}
-      data-testid="chart-esop"
       options={{
         maintainAspectRatio: false,
         responsive: true,
@@ -100,7 +130,7 @@ function ProjectionESOP(props) {
                   Math.trunc(tooltipItems.value)
                 )}`;
               } else if (tooltipItems.datasetIndex === 1) {
-                itemLabel = `Vested Value (${getVestedValue(initVestedYears,tooltipItems.index)}%): ${numFormatter.format(
+                itemLabel = `Vested Value (${vestedPercentages[tooltipItems.index]}%): ${numFormatter.format(
                   Math.trunc(tooltipItems.value)
                 )}`;
               } else if (tooltipItems.datasetIndex === 2) {

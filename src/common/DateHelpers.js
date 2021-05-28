@@ -1,8 +1,8 @@
 /**
  * @param {string} startDate - employee start date
- * @returns {Date} the employee's ESOP entry date
+ * @returns {Date} the employee's ESOP entry date, assuming employee is 18 on this date.
  */
-function getPlanEntryDate(startDate) {
+ function getPlanEntryDate(startDate) {
   let entryYear = startDate.getFullYear() + 1;
   const entryDay = startDate.getDate();
   let entryMonth = startDate.getMonth();
@@ -64,6 +64,49 @@ function getContributionPercentage(entryDate, year) {
 }
 
 /**
+ * @param {Date} startDate - employee start date; assumes valid for the year
+ * @returns {Date} the employee's vesting date for a given year
+ */
+function getVestingDayByStartDate(startDate) {
+  let daysToVest;
+
+  if (startDate.getDay() === 1) { // started on a Monday
+    daysToVest = 24 * 7 + 4
+  } else {
+    daysToVest = 24 * 7 + 6
+  };
+
+  const result = new Date(startDate);
+  result.setDate(result.getDate() + daysToVest);
+  return result;
+}
+
+/**
+ * @param {number} year - year to determine vesting date of.
+ * @returns {Date} the specific day at which a regular employee will reach 1000 hours.
+ */
+ function getVestingDayByYear(year) {
+  let vestingDay = 24;
+  const janFirst = new Date(year, 0, 1);
+  if (year % 4 === 0)  { // leap year
+    if (janFirst.getDay() === 1) { // 1: Monday
+      vestingDay = 21
+    } else if (janFirst.getDay() === 0) { // 1: Sunday)
+      vestingDay = 22;
+    } else {
+      vestingDay = 23;
+    }
+  }
+  else if (janFirst.getDay() === 1) { // 1: Monday
+      vestingDay = 22
+  } else if (janFirst.getDay() === 0) { // 1: Sunday)
+      vestingDay = 23;
+  }
+
+  return new Date(year, 5, vestingDay);
+}
+
+/**
  * @param {Date} startDate - Employee start date
  * @param {number} year - Year to use to determine employee vesting schedule
  * @returns {number} the employee's total years of service
@@ -72,16 +115,20 @@ function getYearsOfService(startDate, year) {
   const startYear = startDate.getFullYear();
   let serviceYears = 0;
 
-  // If the last day of the year is a Sunday-Thursday, employee
-  // must have started by July 10th to receive a vesting year
-  let lastVestingDate = new Date(startYear, 6, 10);
-  if (new Date(startYear, 11, 31).getDay() === 5) {
-    // If December 31st was a Friday, they need to have started by July 12th
-    lastVestingDate = new Date(startYear, 6, 12);
-  } else if (new Date(startYear, 11, 31).getDay() === 6) {
-    // If December 31st was a Saturday, they need to have started by July 11th
-    lastVestingDate = new Date(startYear, 6, 11);
+
+  // If the December 15th is a Sunday-Thursday, employee must have started by June 24th to 
+  // receive a vesting year (1000 paid hours) by their December 20th paycheck.
+  let lastVestingDate = new Date(startYear, 5, 24);
+  if (new Date(startYear, 11, 15).getDay() === 6) {
+    // If December 15th was a Saturday, they need to have started by June 25th
+    lastVestingDate = new Date(startYear, 5, 25);
+  } else if (new Date(startYear, 11, 15).getDay() === 5) {
+      // If December 15th was a Friday, they need to have started by June 26th
+      lastVestingDate = new Date(startYear, 5, 26);
   }
+
+  lastVestingDate.setHours(0,0,0,0);
+  startDate.setHours(0,0,0,0);
 
   if (startYear <= year) {
     serviceYears = year - startYear;
@@ -93,4 +140,4 @@ function getYearsOfService(startDate, year) {
   return serviceYears;
 }
 
-export { getContributionPercentage, getPlanEntryDate, getYearsOfService };
+export { getContributionPercentage, getPlanEntryDate, getVestingDayByStartDate, getVestingDayByYear, getYearsOfService };

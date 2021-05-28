@@ -42,21 +42,27 @@ function round(value, decimals) {
 /**
  * @param {string} startDate - Employee start date
  * @param {number} initValue - Initial 401k balance
+ * @param {number} currentSalary - Current employee salary
+ * @param {number} contributionPercentage - contribution percentage
+ * @param {number} averageRaise - average employee raise to project
  * @param {number} avgGrowth - Average annual growth to project
- * @param {number} monthlyContribution - Amount the employee contributes per year
  * @param {number} avgFees - Average fees paid per year
  * @param {number} initYear - Initial year to use in the calculations
  * @param {number} totalYears - Total years to calculate
+ * @param {number} currentAge - Current age of the employee
  * @returns {Array} - Data points calculated from the input data
  */
 function generate401kGrowthData(
   startDate,
   initValue,
+  currentSalary,
+  contributionPercentage,
+  averageRaise,
   avgGrowth,
-  monthlyContribution,
   avgFees,
   initYear,
-  totalYears
+  totalYears,
+  currentAge
 ) {
   const dataPoints = [{ y: initValue }];
   if (initYear <= startDate.getFullYear()) {
@@ -69,23 +75,46 @@ function generate401kGrowthData(
   }
 
   const years = getYearCount(totalYears);
-  const compoundPerYear = 12;
+  const compoundPerYear = 24;
+  let salary = currentSalary;
+  
+  const calculatedAge = currentAge;
+  let maxContribution = 19500;
 
   // Compounding monthly, for simplicity
   const apy = getAPY(avgGrowth - avgFees, compoundPerYear);
 
   for (let i = 1; i <= years; i += 1) {
+    if (calculatedAge + i > 50) {
+      maxContribution = 26000;
+    }
+
+    const beginningDate = new Date(dataPoints[i-1].x);
+
+    let firstPaycheckIndex = 2 * beginningDate.getMonth(); // 0 if January
+    if (new Date(dataPoints[i - 1].x).getDay() > 15) {
+      firstPaycheckIndex += 1;
+    }
+
     let lastBalance = dataPoints[i - 1].y;
-    const startMonth = new Date(dataPoints[i - 1].x).getMonth(); // 0 if January
-    for (let j = startMonth; j < compoundPerYear; j += 1) {
+
+    for (let j = firstPaycheckIndex; j < compoundPerYear; j += 1) {
       lastBalance += lastBalance * (apy / compoundPerYear);
-      lastBalance += monthlyContribution;
+      const rawContribution = (salary / compoundPerYear) * contributionPercentage;
+      if (rawContribution < (maxContribution/compoundPerYear)) {
+        lastBalance += rawContribution;
+      } else {
+        lastBalance += (maxContribution/compoundPerYear);
+      }
     }
 
     dataPoints[i] = {
       x: `1/1/${initYear + i}`,
       y: round(lastBalance, 2),
     };
+
+    // increment values
+    salary *= (1 + averageRaise);
   }
 
   return dataPoints;
@@ -97,7 +126,7 @@ function generate401kGrowthData(
  * @param {number} avgGrowth - Average annual growth to project
  * @param {number} initSalary - Current employee salary
  * @param {number} avgRaise - Average annual raise to project
- * @param {number} contribution - Average Employer contribution to the ESOP
+ * @param {number} contribution - Average SEL contribution to the ESOP
  * @param {number} inputInitYear - Initial year to use in the calculations
  * @param {number} totalYears - Total years to calculate
  * @returns {Array} - Data points calculated from the input data
@@ -128,7 +157,6 @@ function generateESOPGrowthData(
   let salary = initSalary;
 
   for (let i = 1; i <= getYearCount(totalYears); i += 1) {
-    salary += salary * avgRaise;
 
     // Add the growth component
     let value = dataPoints[i - 1].y * (1 + avgGrowth);
@@ -143,33 +171,19 @@ function generateESOPGrowthData(
       x: `1/1/${initYear + i}`,
       y: round(value, 2),
     };
+
+    // Bump salary for annual raise
+    salary += salary * avgRaise;
+
   }
 
   return dataPoints;
-}
-
-/**
- * @param {number} initVestedYears - the number of vested years the employee already has
- * @param {number} index - the year index of the data set
- * @returns {number} - the percentage that an employee is vested at for a given year index
- */
-function getVestedValue(initVestedYears, index) {
-  let vestedPercentage = 0;
-  if (initVestedYears + index > 4) {
-    vestedPercentage = 100;
-  }
-  else if (initVestedYears + index > 0) {
-    vestedPercentage = 20*(initVestedYears + index);
-  }
-
-  return vestedPercentage;
 }
 
 export {
   generate401kGrowthData,
   generateESOPGrowthData,
   getAPY,
-  getVestedValue,
   getYearCount,
   round,
 };

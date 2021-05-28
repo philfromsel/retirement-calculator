@@ -53,7 +53,6 @@ function ProjectionCombined(props) {
   return (
     <Line
       data={data}
-      data-testid="chart-combined"
       options={{
         maintainAspectRatio: false,
         tooltips: {

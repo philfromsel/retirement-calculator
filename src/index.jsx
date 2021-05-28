@@ -4,10 +4,10 @@ import "mobx-react-lite/batchingForReactDom";
 import { Provider } from "mobx-react";
 import "./index.css";
 import App from "./views/App";
-import stores from "./stores";
+import CalculatorStore from "./stores/CalculatorStore";
 
 ReactDOM.render(
-  <Provider {...stores}>
+  <Provider calculatorStore={CalculatorStore}>
     <App />
   </Provider>,
   document.getElementById("root")

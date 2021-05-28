@@ -36,6 +36,16 @@ function UsageGuide() {
           in a combined graph. The ESOP Growth chart will also include your ESOP entry data and
           vesting percentages, if applicable.
         </Typography>
+        <br />
+      <Typography variant="h5">Privacy</Typography>
+      <br />
+        <Typography variant="body2" color="textPrimary">
+          This calculator is completely self-contained. No data is transmitted to the server or
+          stored in the browser after it is closed. No metrics are collected on entered values.
+          The Current Age field is only used to provide more accurate calculations based on 2021
+          contribution limits. It is used to raise the 401(k) contribution limit the year an
+          employee turns 50, from $19,500 to $26,000.
+        </Typography>
       <br />
       <Typography variant="h5">How It Works</Typography>
       <br />

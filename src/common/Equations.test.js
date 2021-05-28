@@ -2,7 +2,6 @@ import {
   generate401kGrowthData,
   generateESOPGrowthData,
   getAPY,
-  getVestedValue,
   getYearCount,
   round,
 } from "./Equations";
@@ -51,13 +50,13 @@ describe("getAPY", () => {
 describe("generate401kGrowthData", () => {
   it("works for zero values", () => {
     expect(
-      generate401kGrowthData(new Date(2019, 0, 1), 0, 0, 0, 0, 2019, 0)
+      generate401kGrowthData(new Date(2019, 0, 1), 0, 0, 0, 0, 0, 0, 2019, 0, 25)
     ).toEqual([
       { x: "1/1/2019", y: 0 },
       { x: "1/1/2020", y: 0 },
     ]);
     expect(
-      generate401kGrowthData(new Date(2019, 0, 1), 0, 0, 0, 0, 2019, 10)
+      generate401kGrowthData(new Date(2019, 0, 1), 0, 0, 0, 0, 0, 0, 2019, 10, 25)
     ).toEqual([
       { x: "1/1/2019", y: 0 },
       { x: "1/1/2020", y: 0 },
@@ -76,158 +75,81 @@ describe("generate401kGrowthData", () => {
   it("works for different start dates", () => {
     // start date before the initYear value does not impact generated dates
     expect(
-      generate401kGrowthData(new Date(2018, 1, 1), 1000, 0.05, 100, 0, 2019, 0)
+      generate401kGrowthData(new Date(2018, 1, 1), 1000, 50000, 0.05, 0.03, 0.05, 0, 2019, 2, 25)
     ).toEqual([
       { x: "1/1/2019", y: 1000 },
-      { x: "1/1/2020", y: 2277.26 },
+      { x: "1/1/2020", y: 3609.39 },
+      { x: "1/1/2021", y: 6426.03 },
     ]);
     // start date with a year that matches the initYear value results in the first entry being
     // partway through the year
     expect(
-      generate401kGrowthData(new Date(2019, 6, 24), 1000, 0.05, 100, 0, 2019, 3)
+      generate401kGrowthData(new Date(2019, 6, 24), 1000, 50000, 0.05, 0.03, 0.05, 0, 2019, 3, 25)
     ).toEqual([
       { x: "7/24/2019", y: 1000 },
-      { x: "1/1/2020", y: 1630.84 },
-      { x: "1/1/2021", y: 2939.64 },
-      { x: "1/1/2022", y: 4313.88 },
+      { x: "1/1/2020", y: 2288.78 },
+      { x: "1/1/2021", y: 5039.39 },
+      { x: "1/1/2022", y: 8006.61 },
     ]);
   });
 
   it("works for different starting balances", () => {
     expect(
-      generate401kGrowthData(new Date(2019, 0, 1), 0, 0.01, 100, 0, 2019, 5)
+      generate401kGrowthData(new Date(2019, 0, 1), 5000, 50000, 0.05, 0.03, 0.05, 0, 2019, 3, 25)
     ).toEqual([
-      { x: "1/1/2019", y: 0 },
-      { x: "1/1/2020", y: 1205.49 },
-      { x: "1/1/2021", y: 2423.04 },
-      { x: "1/1/2022", y: 3652.76 },
-      { x: "1/1/2023", y: 4894.78 },
-      { x: "1/1/2024", y: 6149.22 },
-    ]);
-    expect(
-      generate401kGrowthData(new Date(2019, 0, 1), 1000, 0.01, 100, 0, 2019, 5)
-    ).toEqual([
-      { x: "1/1/2019", y: 1000 },
-      { x: "1/1/2020", y: 2215.49 },
-      { x: "1/1/2021", y: 3443.14 },
-      { x: "1/1/2022", y: 4683.06 },
-      { x: "1/1/2023", y: 5935.38 },
-      { x: "1/1/2024", y: 7200.22 },
+      { x: "1/1/2019", y: 5000 },
+      { x: "1/1/2020", y: 7809.39 },
+      { x: "1/1/2021", y: 10836.03 },
+      { x: "1/1/2022", y: 14093.09 },
     ]);
   });
 
   it("works for different growth rates", () => {
     expect(
-      generate401kGrowthData(new Date(2019, 0, 1), 1000, 0.15, 100, 0, 2019, 5)
+      generate401kGrowthData(new Date(2019, 0, 1), 5000, 50000, 0.05, 0.03, 0.08, 0, 2019, 3, 25)
     ).toEqual([
-      { x: "1/1/2019", y: 1000 },
-      { x: "1/1/2020", y: 2430.42 },
-      { x: "1/1/2021", y: 4075.4 },
-      { x: "1/1/2022", y: 5967.13 },
-      { x: "1/1/2023", y: 8142.62 },
-      { x: "1/1/2024", y: 10644.43 },
+      { x: "1/1/2019", y: 5000 },
+      { x: "1/1/2020", y: 7994.55 },
+      { x: "1/1/2021", y: 11306.5 },
+      { x: "1/1/2022", y: 14963.58 },
     ]);
   });
 
   it("works for different contributions", () => {
     expect(
-      generate401kGrowthData(new Date(2019, 0, 1), 1000, 0.15, 10, 0, 2019, 5)
+      generate401kGrowthData(new Date(2019, 0, 1), 5000, 50000, 0.1, 0.03, 0.08, 0, 2019, 3, 25)
     ).toEqual([
-      { x: "1/1/2019", y: 1000 },
-      { x: "1/1/2020", y: 1278.04 },
-      { x: "1/1/2021", y: 1597.79 },
-      { x: "1/1/2022", y: 1965.5 },
-      { x: "1/1/2023", y: 2388.37 },
-      { x: "1/1/2024", y: 2874.67 },
+      { x: "1/1/2019", y: 5000 },
+      { x: "1/1/2020", y: 10589.11 },
+      { x: "1/1/2021", y: 16781.02 },
+      { x: "1/1/2022", y: 23628.62 },
     ]);
   });
 
   it("works for different fees", () => {
     expect(
-      generate401kGrowthData(
-        new Date(2019, 0, 1),
-        1000,
-        0.15,
-        10,
-        0.0125,
-        2019,
-        5
-      )
+      generate401kGrowthData(new Date(2019, 0, 1), 5000, 50000, 0.1, 0.03, 0.08, 0.0047, 2019, 3, 25)
     ).toEqual([
-      { x: "1/1/2019", y: 1000 },
-      { x: "1/1/2020", y: 1264.89 },
-      { x: "1/1/2021", y: 1566.2 },
-      { x: "1/1/2022", y: 1908.94 },
-      { x: "1/1/2023", y: 2298.81 },
-      { x: "1/1/2024", y: 2742.28 },
+      { x: "1/1/2019", y: 5000 },
+      { x: "1/1/2020", y: 10554.63 },
+      { x: "1/1/2021", y: 16682.87 },
+      { x: "1/1/2022", y: 23432.57 },
     ]);
   });
 
-  it("works for maximum years (50)", () => {
+  it("works for different ages", () => {
     expect(
-      generate401kGrowthData(
-        new Date(2019, 0, 1),
-        10000,
-        0.07,
-        100,
-        0.0125,
-        2019,
-        50
-      )
+      generate401kGrowthData(new Date(2021, 0, 1), 0, 100000, 0.2, 0.10, 0.05, 0, 2021, 5, 48)
     ).toEqual([
-      { x: "1/1/2019", y: 10000 },
-      { x: "1/1/2020", y: 11806.31 },
-      { x: "1/1/2021", y: 13716.48 },
-      { x: "1/1/2022", y: 15736.48 },
-      { x: "1/1/2023", y: 17872.63 },
-      { x: "1/1/2024", y: 20131.61 },
-      { x: "1/1/2025", y: 22520.48 },
-      { x: "1/1/2026", y: 25046.71 },
-      { x: "1/1/2027", y: 27718.2 },
-      { x: "1/1/2028", y: 30543.3 },
-      { x: "1/1/2029", y: 33530.85 },
-      { x: "1/1/2030", y: 36690.18 },
-      { x: "1/1/2031", y: 40031.17 },
-      { x: "1/1/2032", y: 43564.27 },
-      { x: "1/1/2033", y: 47300.52 },
-      { x: "1/1/2034", y: 51251.61 },
-      { x: "1/1/2035", y: 55429.88 },
-      { x: "1/1/2036", y: 59848.4 },
-      { x: "1/1/2037", y: 64520.99 },
-      { x: "1/1/2038", y: 69462.25 },
-      { x: "1/1/2039", y: 74687.64 },
-      { x: "1/1/2040", y: 80213.49 },
-      { x: "1/1/2041", y: 86057.07 },
-      { x: "1/1/2042", y: 92236.66 },
-      { x: "1/1/2043", y: 98771.57 },
-      { x: "1/1/2044", y: 105682.24 },
-      { x: "1/1/2045", y: 112990.27 },
-      { x: "1/1/2046", y: 120718.52 },
-      { x: "1/1/2047", y: 128891.14 },
-      { x: "1/1/2048", y: 137533.69 },
-      { x: "1/1/2049", y: 146673.18 },
-      { x: "1/1/2050", y: 156338.19 },
-      { x: "1/1/2051", y: 166558.94 },
-      { x: "1/1/2052", y: 177367.38 },
-      { x: "1/1/2053", y: 188797.31 },
-      { x: "1/1/2054", y: 200884.46 },
-      { x: "1/1/2055", y: 213666.62 },
-      { x: "1/1/2056", y: 227183.76 },
-      { x: "1/1/2057", y: 241478.13 },
-      { x: "1/1/2058", y: 256594.43 },
-      { x: "1/1/2059", y: 272579.92 },
-      { x: "1/1/2060", y: 289484.57 },
-      { x: "1/1/2061", y: 307361.24 },
-      { x: "1/1/2062", y: 326265.82 },
-      { x: "1/1/2063", y: 346257.41 },
-      { x: "1/1/2064", y: 367398.52 },
-      { x: "1/1/2065", y: 389755.24 },
-      { x: "1/1/2066", y: 413397.47 },
-      { x: "1/1/2067", y: 438399.13 },
-      { x: "1/1/2068", y: 464838.39 },
-      { x: "1/1/2069", y: 492797.9 },
+      { x: "1/1/2021", y: 0 },
+      { x: "1/1/2022", y: 19963.23 },
+      { x: "1/1/2023", y: 40924.62 },
+      { x: "1/1/2024", y: 67745.73 },
+      { x: "1/1/2025", y: 97750.66 },
+      { x: "1/1/2026", y: 129255.83 },
     ]);
   });
+
 });
 
 describe("generateESOPGrowthData", () => {
@@ -449,10 +371,11 @@ describe("generateESOPGrowthData", () => {
         50000,
         0.03,
         0.15,
-        2020,
-        6
+        2019,
+        7
       )
     ).toEqual([
+      { x: "1/1/2019", y: 0 }, 
       { x: "1/1/2020", y: 0 },
       { x: "1/1/2021", y: 7725 },
       { x: "1/1/2022", y: 16454.25 },
@@ -574,24 +497,5 @@ describe("generateESOPGrowthData", () => {
       { x: "1/1/2069", y: 7928923.03 },
       { x: "1/1/2070", y: 8729315.33 },
     ]);
-  });
-});
-
-describe("getVestedValue", () => {
-  it("works for permutations of values", () => {
-    expect(getVestedValue(0,0)).toEqual(0);
-    expect(getVestedValue(0,1)).toEqual(20);
-    expect(getVestedValue(0,2)).toEqual(40);
-    expect(getVestedValue(0,3)).toEqual(60);
-    expect(getVestedValue(0,4)).toEqual(80);
-    expect(getVestedValue(0,5)).toEqual(100);
-    expect(getVestedValue(1,0)).toEqual(20);
-    expect(getVestedValue(2,0)).toEqual(40);
-    expect(getVestedValue(3,0)).toEqual(60);
-    expect(getVestedValue(4,0)).toEqual(80);
-    expect(getVestedValue(5,0)).toEqual(100);
-    expect(getVestedValue(50,0)).toEqual(100);
-    expect(getVestedValue(0,50)).toEqual(100);
-    expect(getVestedValue(5,5)).toEqual(100);
   });
 });

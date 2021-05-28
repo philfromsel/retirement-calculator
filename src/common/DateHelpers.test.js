@@ -1,6 +1,8 @@
 import {
   getContributionPercentage,
   getPlanEntryDate,
+  getVestingDayByStartDate,
+  getVestingDayByYear,
   getYearsOfService,
 } from "./DateHelpers";
 
@@ -104,45 +106,81 @@ describe("getContributionPercentage", () => {
   });
 });
 
+describe("getVestingDayByStartDate", () => {
+  it("should return correctly for different starting days", () => {
+    expect(getVestingDayByStartDate(new Date(2020, 0, 1))).toEqual(new Date(2020, 5, 23));
+    expect(getVestingDayByStartDate(new Date(2020, 6, 10))).toEqual(new Date(2020, 11, 31));
+    expect(getVestingDayByStartDate(new Date(2019, 1, 13))).toEqual(new Date(2019, 7, 6));
+    expect(getVestingDayByStartDate(new Date(2019, 6, 10))).toEqual(new Date(2019, 11, 31));
+    expect(getVestingDayByStartDate(new Date(2018, 2, 5))).toEqual(new Date(2018, 7, 24));
+    expect(getVestingDayByStartDate(new Date(2018, 6, 10))).toEqual(new Date(2018, 11, 31));
+    expect(getVestingDayByStartDate(new Date(2017, 3, 25))).toEqual(new Date(2017, 9, 16));
+    expect(getVestingDayByStartDate(new Date(2017, 6, 10))).toEqual(new Date(2017, 11, 29));
+    expect(getVestingDayByStartDate(new Date(2016, 1, 26))).toEqual(new Date(2016, 7, 18));
+    expect(getVestingDayByStartDate(new Date(2016, 6, 10))).toEqual(new Date(2016, 11, 31));
+  });
+});
+
+describe("getVestingDayByYear", () => {
+  it("should return June 24th for non-leap years starting on a Tuesday-Saturday", () => {
+    expect(getVestingDayByYear(2019)).toEqual(new Date(2019, 5, 24));
+  });
+
+  it("should return June 23th for non-leap years starting on a Sunday", () => {
+    expect(getVestingDayByYear(2017)).toEqual(new Date(2017, 5, 23));
+  });
+
+  it("should return June 22th for non-leap years starting on a Monday", () => {
+    expect(getVestingDayByYear(2018)).toEqual(new Date(2018, 5, 22));
+  });
+
+  it("should return June 23th for leap years starting on a Tuesday-Saturday", () => {
+    expect(getVestingDayByYear(2016)).toEqual(new Date(2016, 5, 23));
+  });
+
+  it("should return June 22th for leap years starting on a Sunday", () => {
+    expect(getVestingDayByYear(2012)).toEqual(new Date(2012, 5, 22));
+  });
+
+  it("should return June 21st for leap years starting on a Monday", () => {
+    expect(getVestingDayByYear(1996)).toEqual(new Date(1996, 5, 21));
+  });
+});
+
 describe("getYearsOfService", () => {
   it("should return zero if the employee hasn't started yet", () => {
     expect(getYearsOfService(new Date(2020, 0, 1), 2019)).toEqual(0);
   });
 
-  it("should return 1 for 2019 if they started on or before July 10th", () => {
-    expect(getYearsOfService(new Date(2019, 6, 9), 2019)).toEqual(1);
-    expect(getYearsOfService(new Date(2019, 6, 10), 2019)).toEqual(1);
+  // 15th is a Thursday
+  it("should return a year of service for 2022 if they started on or before June 24th", () => {
+    expect(getYearsOfService(new Date(2022, 5, 23), 2022)).toEqual(1);
+    expect(getYearsOfService(new Date(2022, 5, 24), 2022)).toEqual(1);
+    expect(getYearsOfService(new Date(2022, 5, 25), 2022)).toEqual(0);
+    expect(getYearsOfService(new Date(2022, 5, 24), 2032)).toEqual(11);
   });
 
-  it("should return 0 for 2019 if they started on or after July 11", () => {
-    expect(getYearsOfService(new Date(2019, 6, 11), 2019)).toEqual(0);
+  // 15th is a Friday
+  it("should return a year of service for 2023 if they started on or before June 26th", () => {
+    expect(getYearsOfService(new Date(2023, 5, 25), 2023)).toEqual(1);
+    expect(getYearsOfService(new Date(2023, 5, 26), 2023)).toEqual(1);
+    expect(getYearsOfService(new Date(2023, 5, 27), 2023)).toEqual(0);
+    expect(getYearsOfService(new Date(2023, 5, 26), 2054)).toEqual(32);
   });
 
-  it("should return 3 for 2017 if they started before July 11th", () => {
-    expect(getYearsOfService(new Date(2017, 6, 10), 2019)).toEqual(3);
+  // 15th is a Saturday
+  it("should return a year of service for 2018 if they started on or before June 25th", () => {
+    expect(getYearsOfService(new Date(2018, 5, 24), 2018)).toEqual(1);
+    expect(getYearsOfService(new Date(2018, 5, 25), 2018)).toEqual(1);
+    expect(getYearsOfService(new Date(2018, 5, 26), 2018)).toEqual(0);
+    expect(getYearsOfService(new Date(2018, 5, 25), 2021)).toEqual(4);
   });
 
-  it("should return 2 for 2017 if they started on July 11th", () => {
-    expect(getYearsOfService(new Date(2017, 6, 11), 2019)).toEqual(2);
-  });
-
-  it("should return 4 for 2016 if they started before July 12th", () => {
-    expect(getYearsOfService(new Date(2016, 6, 11), 2019)).toEqual(4);
-  });
-
-  it("should return 3 for 2016 if they started on July 12th", () => {
-    expect(getYearsOfService(new Date(2016, 6, 12), 2019)).toEqual(3);
-  });
-
-  it("should return 10 for 2010 if they started before July 12th", () => {
-    expect(getYearsOfService(new Date(2010, 6, 12), 2019)).toEqual(10);
-  });
-
-  it("should return 9 for 2016 if they started on July 13th", () => {
-    expect(getYearsOfService(new Date(2010, 6, 13), 2019)).toEqual(9);
-  });
-
-  it("should return 6 for the any year earlier than six years ago", () => {
-    expect(getYearsOfService(new Date(2013, 11, 31), 2019)).toEqual(6);
+  // 15th is a Sunday
+  it("should return a year of service for 2024 if they started on or before June 24th", () => {
+    expect(getYearsOfService(new Date(2024, 5, 23), 2024)).toEqual(1);
+    expect(getYearsOfService(new Date(2024, 5, 24), 2024)).toEqual(1);
+    expect(getYearsOfService(new Date(2024, 5, 25), 2024)).toEqual(0);
+    expect(getYearsOfService(new Date(2024, 5, 24), 2029)).toEqual(6);
   });
 });
