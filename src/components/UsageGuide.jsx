@@ -117,11 +117,11 @@ function UsageGuide() {
           <li>
             <Typography variant="body2" color="textPrimary">
               <a
-                href={`https://advisors.vanguard.com/insights/article/marketperspectives${  monthName.toLowerCase()  }2020`}
+                href={`https://advisors.vanguard.com/insights/article/marketperspectives${  monthName.toLowerCase()  }2021`}
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                {`Vanguard Market Perspective (${  monthName  } 2020)`}
+                {`Vanguard Market Perspective (${  monthName  } 2021)`}
               </a>
             </Typography>
           </li>
@@ -131,13 +131,12 @@ function UsageGuide() {
       <Typography variant="h5">401(k) Fees?</Typography>
       <br />
       <Typography variant="body2" color="textPrimary">
-        As employee-owners, we share in the overhead costs associated with administering our
-        company&apos;s 401(k) offering. There are administration overhead fees,and each individual
-        fund will have its own fund management fees. For index funds, this is typically very low
-        (less than 2 tenths of a percent), but it can be significantly higher for actively managed
-        funds. A more detailed value to use for calculations can be determined by referencing
-        your current fund balance and aggregating the percentage of various fees at your target
-        asset allocation.
+        There are administration overhead fees, and each individual fund will have its own fund
+        management fees. For index funds, this is typically very low (less than 2 tenths of a
+        percent), but it can be significantly higher for actively managed funds. A more detailed
+        value to use for calculations can be determined by referencing your current fund balance
+        and aggregating the percentage of various fees at your target asset allocation. Please
+        contact your 401(k) administrator for more information regarding your 401(k) fees.
       </Typography>
       <br />
       <Typography variant="h5">Questions?</Typography>

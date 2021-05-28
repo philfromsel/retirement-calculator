@@ -44,20 +44,23 @@ describe("CalculatorStore", () => {
   it("should generate 401k values", () => {
     store().handleInputsUpdate("initYear", 2020);
     store().handleInputsUpdate("yearsToCalculate", 1);
+    store().handleInputsUpdate("startingSalary", 31200);
     expect(store().dataPoints401k).toEqual(
       [
-        { "x": `1/1/${store().initYear}`, "y":0 },
-        { "x": `1/1/${store().initYear + 1}`, "y":980.98 }
+        { "x": `1/1/${store().initYear}`, "y": 0 },
+        { "x": `1/1/${store().initYear + 1}`, "y": 980.72 }
     ]);
   });
 
   it("should generate ESOP values", () => {
     store().handleInputsUpdate("yearsToCalculate", 2);
+    store().handleInputsUpdate("averageEmployerESOPContribution", 15);
+    store().handleInputsUpdate("startingSalary", 31200);
     expect(store().dataPointsESOP).toEqual(
       [
-        { "x": `1/1/${store().initYear}`, "y":0 },
-        { "x": `1/1/${store().initYear + 1}`, "y":0 },
-        { "x": `1/1/${store().initYear + 2}`, "y":5130.51 }
+        { "x": `1/1/${store().initYear}`, "y": 0 },
+        { "x": `1/1/${store().initYear + 1}`, "y": 0 },
+        { "x": `1/1/${store().initYear + 2}`, "y": 4965.01 }
       ]);
   });
 

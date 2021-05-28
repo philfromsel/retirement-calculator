@@ -95,7 +95,7 @@ class ProjectionInputs extends Component {
               <br />
               <Typography variant="caption" color="textSecondary">
                 <i>
-                  Employee ESOP account balance from the {store.initYear} report
+                  Employee ESOP account balance from the {store.initYear} statement
                 </i>
               </Typography>
               <br />
