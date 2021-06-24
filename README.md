@@ -8,7 +8,7 @@ This project is provided in accordance with the accompanying license in this rep
 
 ## Status
 
-[![<SEL>](https://circleci.com/github/philfromsel/retirement-calculator.svg?style=shield)](https://app.circleci.com/pipelines/github/philfromsel/retirement-calculator)
+[![<SEL>](https://circleci.com/github/philfromsel/retirement-calculator.svg?style=shield&circle-token=e555aabbe884b656c7069432253528a9901e2b8b)](https://app.circleci.com/pipelines/github/philfromsel/retirement-calculator)
 
 ## Usage Guide
 
