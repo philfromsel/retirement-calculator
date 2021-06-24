@@ -6,6 +6,10 @@ scenarios.  This project was bootstrapped with
 
 This project is provided in accordance with the accompanying license in this repository.
 
+## Status
+
+[![<SEL>](https://circleci.com/github/philfromsel/retirement-calculator.svg?style=shield)](https://app.circleci.com/pipelines/github/philfromsel/retirement-calculator)
+
 ## Usage Guide
 
 The accompanying Dockerfile template is provided as an example for loading and serving the
